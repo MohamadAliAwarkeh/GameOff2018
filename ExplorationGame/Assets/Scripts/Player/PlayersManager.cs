@@ -27,11 +27,11 @@ public class PlayersManager : MonoBehaviour
     //This is a list to show available spawnPoints for the new players to connect to
     List<Vector3> playerSpawnPoints = new List<Vector3>()
     {
-        new Vector3(-7, 2, 0),
-        new Vector3(-5, 2, 0),
+        new Vector3(-6, 2.3f, 0),
+        new Vector3(-2, 2.3f, 0),
     };
 
-    List<PlayerController> players = new List<PlayerController>(maxPlayers);
+    public List<PlayerController> players = new List<PlayerController>(maxPlayers);
 
 	void Start () 
 	{
@@ -121,6 +121,7 @@ public class PlayersManager : MonoBehaviour
 
     void RemovePlayer(PlayerController player)
     {
+        //Destroying the player gameObject and removing all of the inputs
         playerSpawnPoints.Insert(0, player.transform.position);
         players.Remove(player);
         player.Device = null;
