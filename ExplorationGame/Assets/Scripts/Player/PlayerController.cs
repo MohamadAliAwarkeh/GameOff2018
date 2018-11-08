@@ -18,6 +18,15 @@ public class PlayerController : MonoBehaviour
 	[Range(0, 10)] public float outsideSpeed;
 	public PlayerState playerState = PlayerState.Idle;
 
+    [Header("Bullet Variables")]
+    public StartingWeaponBullet startingWepBullet;
+    public RocketWeaponBullet rocketWepBullet;
+    public Transform fireFrom;
+
+    [Header("Weapon Scriptable Object References")]
+    public WeaponsSO startingWepSO;
+    public WeaponsSO rocketWepSO;
+
     [Header("Player Audio")]
     public List<AudioClip> playerSFX = new List<AudioClip>();
 	
@@ -29,6 +38,21 @@ public class PlayerController : MonoBehaviour
     private Camera mainCamera;
     private Vector3 playerDirection;
     private Vector2 playerLookDirection;
+
+    //Private Starting Weapon Variables
+    private float bulletSpeed;
+    private float timeBetweenShots;
+    private float bulletSpread;
+    private float shotCounter;
+    private float bulletSpreadWidth;
+
+    //Private Starting Weapon Variables
+    private float bulletSpeedRocket;
+    private float timeBetweenShotsRocket;
+    private float bulletSpreadRocket;
+    private float shotCounterRocket;
+    private float bulletSpreadWidthRocket;
+    private bool setRocketActive;
 
     public InputDevice Device
 	{
@@ -43,6 +67,17 @@ public class PlayerController : MonoBehaviour
 
         playerLookDirection.x = 0f;
         playerLookDirection.y = 1f;
+
+        //Setting the values of the starting weapon variables equal to the scriptable object
+        bulletSpeed = startingWepSO.wepBulletSpeed;
+        timeBetweenShots = startingWepSO.wepFireRate;
+        bulletSpread = startingWepSO.wepBulletSpread;
+
+        //Setting the values of the rocket variables equal to the scriptable object
+        bulletSpeedRocket = rocketWepSO.wepBulletSpeed;
+        timeBetweenShotsRocket = rocketWepSO.wepFireRate;
+        bulletSpreadRocket = rocketWepSO.wepBulletSpread;
+        setRocketActive = false;
     }
 	
 	void Update ()
@@ -58,6 +93,7 @@ public class PlayerController : MonoBehaviour
             //The states a player can have during Walking and Actions
             PlayerMovement();
             PlayerRotation();
+            PlayerShooting();
 			break;
 		}
 	}
@@ -111,8 +147,83 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    bool IsFiring()
+    {
+        //If the inputs are pressed then bool set to true
+        //Otherwise if there are no inputs pressed, bool is set to false
+        return Device.RightStickX || Device.RightStickY;
+    }
+
+    void PlayerShooting()
+    {
+        StartingWeapon();
+
+        if (setRocketActive == true)
+        {
+            RocketWeapon();
+        }
+    }
+
+    void StartingWeapon()
+    {
+        //Add bullet spread to the weapon
+        bulletSpreadWidth = Random.Range(-bulletSpread, bulletSpread);
+
+        //If is firing
+        if (IsFiring())
+        {
+            shotCounter -= Time.deltaTime;
+            if (shotCounter <= 0)
+            {
+                shotCounter = timeBetweenShots;
+                StartingWeaponBullet newBullet = Instantiate(startingWepBullet, fireFrom.position, fireFrom.rotation) as StartingWeaponBullet;
+                newBullet.bulletSpeed = bulletSpeed;
+                newBullet.transform.Rotate(0f, bulletSpreadWidth, 0f);
+            }
+
+            return;
+        }
+
+        //If is not firing
+        if (!IsFiring())
+        {
+            shotCounter = 0;
+            return;
+        }
+    }
+
+    void RocketWeapon()
+    {
+        //Add bullet spread to the weapon
+        bulletSpreadWidthRocket = Random.Range(-bulletSpreadRocket, bulletSpreadRocket);
+
+        //If is firing
+        if (IsFiring())
+        {
+            shotCounterRocket -= Time.deltaTime;
+            if (shotCounterRocket <= 0)
+            {
+                shotCounterRocket = timeBetweenShotsRocket;
+                RocketWeaponBullet newRocket = Instantiate(rocketWepBullet, fireFrom.position, fireFrom.rotation) as RocketWeaponBullet;
+                newRocket.bulletSpeed = bulletSpeedRocket;
+                newRocket.transform.Rotate(0f, bulletSpreadWidthRocket, 0f);
+            }
+
+            return;
+        }
+
+        //If is not firing
+        if (!IsFiring())
+        {
+            shotCounter = 0;
+            return;
+        }
+    }
+
     void OnCollisionStay(Collision theCol)
 	{
+        //Checks whether the player is colliding with either a floor
+        //that is inside, or outside
 		if (theCol.gameObject.CompareTag("FloorInside"))
 		{
 			this.moveSpeed = insideSpeed;
@@ -122,6 +233,20 @@ public class PlayerController : MonoBehaviour
 			this.moveSpeed = outsideSpeed;
 		}
 	}
+
+    void OnTriggerStay(Collider theCol)
+    {
+        //Checks whether the player is colliding with the weapon pickup
+        //and if an input happens, then a weapon is activated
+        if (theCol.gameObject.CompareTag("WeaponPickup"))
+        {
+            if (Device.Action3.WasPressed)
+            {
+                setRocketActive = true;
+                Destroy(theCol.gameObject);
+            }
+        }
+    }
 
     bool IsPlayerMoving()
     {

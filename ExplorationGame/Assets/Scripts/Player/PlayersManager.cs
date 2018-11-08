@@ -27,8 +27,8 @@ public class PlayersManager : MonoBehaviour
     //This is a list to show available spawnPoints for the new players to connect to
     List<Vector3> playerSpawnPoints = new List<Vector3>()
     {
-        new Vector3(-6, 2.3f, 0),
-        new Vector3(-2, 2.3f, 0),
+        new Vector3(-6, 2, 0),
+        new Vector3(-2, 2, 0),
     };
 
     public List<PlayerController> players = new List<PlayerController>(maxPlayers);
