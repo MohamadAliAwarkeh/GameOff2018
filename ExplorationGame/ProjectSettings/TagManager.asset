@@ -7,7 +7,9 @@ TagManager:
   - Fire
   - FloorInside
   - FloorOutside
-  - WeaponPickup
+  - SMGPickup
+  - RocketPickup
+  - Wall
   layers:
   - Default
   - TransparentFX
@@ -19,7 +21,7 @@ TagManager:
   - 
   - OutsideGround
   - Bullets
-  - 
+  - Guns
   - 
   - 
   - 

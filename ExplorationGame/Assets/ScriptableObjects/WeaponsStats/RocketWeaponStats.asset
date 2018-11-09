@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Name: RocketWeaponStats
   m_EditorClassIdentifier: 
   wepName: Rocket Weapon
-  wepDamage: 1
-  wepBulletSpeed: 50
+  wepDamage: 10
+  wepBulletSpeed: 5
   wepFireRate: 2
   wepBulletSpread: 1
   wepRange: 4

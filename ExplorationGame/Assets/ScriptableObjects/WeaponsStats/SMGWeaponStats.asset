@@ -11,7 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad1a1b7542bc70540a8294271b0d693d, type: 3}
   m_Name: SMGWeaponStats
   m_EditorClassIdentifier: 
-  wepName: Starting Weapon
+  wepName: SMG Weapon
   wepDamage: 1
   wepBulletSpeed: 25
   wepFireRate: 0.1

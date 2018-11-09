@@ -18,10 +18,11 @@ public class PlayerController : MonoBehaviour
 	[Range(0, 10)] public float outsideSpeed;
 	public PlayerState playerState = PlayerState.Idle;
 
-    [Header("Bullet Variables")]
+    [Header("Bullet / Gun Variables")]
     public StartingWeaponBullet startingWepBullet;
     public RocketWeaponBullet rocketWepBullet;
-    public Transform fireFrom;
+    public Transform[] fireFrom;
+    public GameObject[] weaponMesh;
 
     [Header("Weapon Scriptable Object References")]
     public WeaponsSO startingWepSO;
@@ -67,6 +68,12 @@ public class PlayerController : MonoBehaviour
 
         playerLookDirection.x = 0f;
         playerLookDirection.y = 1f;
+
+        //Setting all the mesh renderers off
+        for (int i = 0; i < weaponMesh.Length; i++)
+        {
+            weaponMesh[i].GetComponent<MeshRenderer>().enabled = false;
+        }
 
         //Setting the values of the starting weapon variables equal to the scriptable object
         bulletSpeed = startingWepSO.wepBulletSpeed;
@@ -166,6 +173,9 @@ public class PlayerController : MonoBehaviour
 
     void StartingWeapon()
     {
+        //Setting the weapon mesh render on
+        weaponMesh[10].GetComponent<MeshRenderer>().enabled = true;
+
         //Add bullet spread to the weapon
         bulletSpreadWidth = Random.Range(-bulletSpread, bulletSpread);
 
@@ -176,11 +186,10 @@ public class PlayerController : MonoBehaviour
             if (shotCounter <= 0)
             {
                 shotCounter = timeBetweenShots;
-                StartingWeaponBullet newBullet = Instantiate(startingWepBullet, fireFrom.position, fireFrom.rotation) as StartingWeaponBullet;
-                newBullet.bulletSpeed = bulletSpeed;
-                newBullet.transform.Rotate(0f, bulletSpreadWidth, 0f);
+                StartingWeaponBullet newBullet = Instantiate(startingWepBullet, fireFrom[10].position, fireFrom[10].rotation) as StartingWeaponBullet;
+                newBullet.bulletSpeed = bulletSpeedRocket;
+                newBullet.transform.Rotate(0f, bulletSpreadWidthRocket, 0f);
             }
-
             return;
         }
 
@@ -194,6 +203,9 @@ public class PlayerController : MonoBehaviour
 
     void RocketWeapon()
     {
+        //Setting the weapon mesh render on
+        weaponMesh[5].GetComponent<MeshRenderer>().enabled = true;
+
         //Add bullet spread to the weapon
         bulletSpreadWidthRocket = Random.Range(-bulletSpreadRocket, bulletSpreadRocket);
 
@@ -204,11 +216,10 @@ public class PlayerController : MonoBehaviour
             if (shotCounterRocket <= 0)
             {
                 shotCounterRocket = timeBetweenShotsRocket;
-                RocketWeaponBullet newRocket = Instantiate(rocketWepBullet, fireFrom.position, fireFrom.rotation) as RocketWeaponBullet;
+                RocketWeaponBullet newRocket = Instantiate(rocketWepBullet, fireFrom[5].position, fireFrom[5].rotation) as RocketWeaponBullet;
                 newRocket.bulletSpeed = bulletSpeedRocket;
                 newRocket.transform.Rotate(0f, bulletSpreadWidthRocket, 0f);
             }
-
             return;
         }
 
@@ -218,6 +229,16 @@ public class PlayerController : MonoBehaviour
             shotCounter = 0;
             return;
         }
+    }
+
+    void WeaponSwitching()
+    {
+        //Adding swapping between player primary weapon and custom weapon
+    }
+
+    void WeaponAmmo()
+    {
+
     }
 
     void OnCollisionStay(Collision theCol)
@@ -238,7 +259,7 @@ public class PlayerController : MonoBehaviour
     {
         //Checks whether the player is colliding with the weapon pickup
         //and if an input happens, then a weapon is activated
-        if (theCol.gameObject.CompareTag("WeaponPickup"))
+        if (theCol.gameObject.CompareTag("RocketPickup"))
         {
             if (Device.Action3.WasPressed)
             {

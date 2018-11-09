@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Name: StartingWeaponStats
   m_EditorClassIdentifier: 
   wepName: Starting Weapon
-  wepDamage: 1
+  wepDamage: 3
   wepBulletSpeed: 20
   wepFireRate: 0.3
   wepBulletSpread: 5
