@@ -260,7 +260,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   outsideTerrain: {fileID: 0}
   drawShader: {fileID: 4800000, guid: 8058ecf325f8bdf44b90464acf7b1021, type: 3}
-  brushSize: 2
+  brushSize: 0.8
   brushStrength: 1
   feet:
   - {fileID: 4340884135049260}
