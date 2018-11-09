@@ -18,15 +18,19 @@ public class PlayerController : MonoBehaviour
 	[Range(0, 10)] public float outsideSpeed;
 	public PlayerState playerState = PlayerState.Idle;
 
-    [Header("Bullet / Gun Variables")]
+    [Header("Bullet Script References")]
     public StartingWeaponBullet startingWepBullet;
     public RocketWeaponBullet rocketWepBullet;
+    public SMGWeaponBullet smgWepBullet;
+
+    [Header("Weapon Variables")]
     public Transform[] fireFrom;
     public GameObject[] weaponMesh;
 
     [Header("Weapon Scriptable Object References")]
     public WeaponsSO startingWepSO;
     public WeaponsSO rocketWepSO;
+    public WeaponsSO smgWepSO;
 
     [Header("Player Audio")]
     public List<AudioClip> playerSFX = new List<AudioClip>();
@@ -47,13 +51,21 @@ public class PlayerController : MonoBehaviour
     private float shotCounter;
     private float bulletSpreadWidth;
 
-    //Private Starting Weapon Variables
+    //Private Rocket Weapon Variables
     private float bulletSpeedRocket;
     private float timeBetweenShotsRocket;
     private float bulletSpreadRocket;
     private float shotCounterRocket;
     private float bulletSpreadWidthRocket;
     private bool setRocketActive;
+
+    //Private SMG Weapon Variables
+    private float bulletSpeedSMG;
+    private float timeBetweenShotsSMG;
+    private float bulletSpreadSMG;
+    private float shotCounterSMG;
+    private float bulletSpreadWidthSMG;
+    private bool setSMGActive;
 
     public InputDevice Device
 	{
@@ -85,6 +97,12 @@ public class PlayerController : MonoBehaviour
         timeBetweenShotsRocket = rocketWepSO.wepFireRate;
         bulletSpreadRocket = rocketWepSO.wepBulletSpread;
         setRocketActive = false;
+
+        //Setting the values of the rocket variables equal to the scriptable object
+        bulletSpeedSMG = smgWepSO.wepBulletSpeed;
+        timeBetweenShotsSMG = smgWepSO.wepFireRate;
+        bulletSpreadSMG = smgWepSO.wepBulletSpread;
+        setSMGActive = false;
     }
 	
 	void Update ()
@@ -169,6 +187,11 @@ public class PlayerController : MonoBehaviour
         {
             RocketWeapon();
         }
+
+        if (setSMGActive == true)
+        {
+            SMGWeapon();
+        }
     }
 
     void StartingWeapon()
@@ -226,7 +249,37 @@ public class PlayerController : MonoBehaviour
         //If is not firing
         if (!IsFiring())
         {
-            shotCounter = 0;
+            shotCounterRocket = 0;
+            return;
+        }
+    }
+
+    void SMGWeapon()
+    {
+        //Setting the weapon mesh render on
+        weaponMesh[0].GetComponent<MeshRenderer>().enabled = true;
+
+        //Add bullet spread to the weapon
+        bulletSpreadWidthSMG = Random.Range(-bulletSpreadSMG, bulletSpreadSMG);
+
+        //If is firing
+        if (IsFiring())
+        {
+            shotCounterSMG -= Time.deltaTime;
+            if (shotCounterSMG <= 0)
+            {
+                shotCounterSMG = timeBetweenShotsSMG;
+                SMGWeaponBullet newBullet = Instantiate(smgWepBullet, fireFrom[0].position, fireFrom[0].rotation) as SMGWeaponBullet;
+                newBullet.bulletSpeed = bulletSpeedSMG;
+                newBullet.transform.Rotate(0f, bulletSpreadWidthSMG, 0f);
+            }
+            return;
+        }
+
+        //If is not firing
+        if (!IsFiring())
+        {
+            shotCounterSMG = 0;
             return;
         }
     }
@@ -264,6 +317,15 @@ public class PlayerController : MonoBehaviour
             if (Device.Action3.WasPressed)
             {
                 setRocketActive = true;
+                Destroy(theCol.gameObject);
+            }
+        }
+
+        if (theCol.gameObject.CompareTag("SMGPickup"))
+        {
+            if (Device.Action3.WasPressed)
+            {
+                setSMGActive = true;
                 Destroy(theCol.gameObject);
             }
         }

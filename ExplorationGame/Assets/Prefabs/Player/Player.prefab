@@ -1780,6 +1780,8 @@ MonoBehaviour:
     type: 2}
   rocketWepBullet: {fileID: 114731525625377986, guid: 9600ce3afa009f14188325f057f809df,
     type: 2}
+  smgWepBullet: {fileID: 114869523049257088, guid: a1c174e20cd495a49b60d8069d03c2a2,
+    type: 2}
   fireFrom:
   - {fileID: 4472122573046622}
   - {fileID: 4168356421474060}
@@ -1806,6 +1808,7 @@ MonoBehaviour:
   - {fileID: 1051662751414246}
   startingWepSO: {fileID: 11400000, guid: d341c3cd3e2d85545bae79ca9f075137, type: 2}
   rocketWepSO: {fileID: 11400000, guid: b1c2eaccb53bc004399bdf878d67aeca, type: 2}
+  smgWepSO: {fileID: 11400000, guid: c1d162dddad3a4240841fcf370f4f221, type: 2}
   playerSFX:
   - {fileID: 8300000, guid: 7c9be702580ae5645bc578f3cb65cfe4, type: 3}
 --- !u!114 &114807552063155984
