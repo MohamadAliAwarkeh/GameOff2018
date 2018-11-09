@@ -49,7 +49,7 @@ public class StartingWeaponBullet : MonoBehaviour
     void Explode()
     {
         //Explosion effect
-        Instantiate(explosionEffect, transform.position, transform.rotation);
+        //Instantiate(explosionEffect, transform.position, transform.rotation);
 
         //Get nearby Objects
         //Add force and damage
