@@ -20,7 +20,7 @@ public class PlayersManager : MonoBehaviour
 {
 
     //Public Variables
-    public GameObject playerPrefab;
+    public PlayerController playerPrefab;
     const int maxPlayers = 2;
 
 
@@ -108,8 +108,7 @@ public class PlayersManager : MonoBehaviour
             var playerPosition = playerSpawnPoints[0];
             playerSpawnPoints.RemoveAt(0);
 
-            var gameObject = (GameObject)Instantiate(playerPrefab, playerPosition, Quaternion.identity);
-            var player = gameObject.GetComponent<PlayerController>();
+            var player = Instantiate(playerPrefab, playerPosition, Quaternion.identity);
             player.Device = inputDevice;
             players.Add(player);
 
@@ -117,6 +116,11 @@ public class PlayersManager : MonoBehaviour
         }
 
         return null;
+    }
+
+    void SetCameraTargets()
+    {
+        //Transform[] targets = new Transform[players.Count];
     }
 
     void RemovePlayer(PlayerController player)

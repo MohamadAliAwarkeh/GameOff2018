@@ -6,9 +6,6 @@ using UnityEngine;
 public class CameraFollow : MonoBehaviour {
 
     //Public Variables
-    [Header("Player Variables")]
-    public List<Transform> targets;
-
     [Header("Camera Variables")]
     public Vector3 offset;
     public float smoothTime;
@@ -16,7 +13,6 @@ public class CameraFollow : MonoBehaviour {
     public float maxZoom;
     public float zoomLimiter;
 
-    [Header("Script References")]
     public PlayersManager playerManager;
 
     //Private Variables
@@ -31,13 +27,13 @@ public class CameraFollow : MonoBehaviour {
     void LateUpdate()
     {
         //To make sure we do not get an error
-        if (targets.Count == 0)
+        if (playerManager.players.Count == 0)
         {
             return;
         }
 
         Move();
-        //Zoom();
+        Zoom();
     }
 
     void Move()
@@ -62,17 +58,17 @@ public class CameraFollow : MonoBehaviour {
     {
         //If there is only one player in the scene, then we set the camera to 
         //follow the one player
-        if (targets.Count == 1)
+        if (playerManager.players.Count == 1)
         {
-            return targets[0].position;
+            return playerManager.players[0].transform.position;
         }
 
         //Otherwise, if there is more than one player in the scene, then we
         //set the camera to find the bound between all players and get the center point
-        var bounds = new Bounds(targets[0].position, Vector3.zero);
-        for (int i = 0; i < targets.Count; i++)
+        var bounds = new Bounds(playerManager.players[0].transform.position, Vector3.zero);
+        for (int i = 0; i < playerManager.players.Count; i++)
         {
-            bounds.Encapsulate(targets[i].position);
+            bounds.Encapsulate(playerManager.players[i].transform.position);
         }
 
         return bounds.center;
@@ -80,10 +76,10 @@ public class CameraFollow : MonoBehaviour {
 
     float GetGreatestDistance()
     {
-        var bounds = new Bounds(targets[0].position, Vector3.zero);
-        for (int i = 0; i < targets.Count; i++)
+        var bounds = new Bounds(playerManager.players[0].transform.position, Vector3.zero);
+        for (int i = 0; i < playerManager.players.Count; i++)
         {
-            bounds.Encapsulate(targets[i].position);
+            bounds.Encapsulate(playerManager.players[i].transform.position);
         }
 
         return bounds.size.x;
