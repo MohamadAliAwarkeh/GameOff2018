@@ -18,6 +18,10 @@ public class PlayerController : MonoBehaviour
 	[Range(0, 10)] public float outsideSpeed;
 	public PlayerState playerState = PlayerState.Idle;
 
+    [Header("Player House Destruction")]
+    public float destructionRadius;
+    public float explosionForce;
+
     [Header("Bullet Script References")]
     public StartingWeaponBullet startingWepBullet;
     public RocketWeaponBullet rocketWepBullet;
@@ -138,6 +142,8 @@ public class PlayerController : MonoBehaviour
         //Adding velocity to the player with moveSpeed to make him move
         moveInput = new Vector3(Device.LeftStickX, 0f, Device.LeftStickY);
 		moveVelocity = moveInput * moveSpeed;
+
+        HouseDestruction();
 	}
 
     void PlayerRotation()
@@ -294,6 +300,35 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    void HouseDestruction()
+    {
+        //Initially we will make an array which searches through each object that is colliding with the player
+        //within the specified bounderies, and then we will call another script in which we destroy the
+        //original object and instantiate a broken version, then we search for colliders again, but this
+        //time for the new destroyed buildings, and add force to them
+        Collider[] collidersToDestroy = Physics.OverlapSphere(transform.position, destructionRadius);
+
+        foreach (Collider nearbyObject in collidersToDestroy)
+        {
+            Destructable dest = nearbyObject.GetComponent<Destructable>();
+            if (dest != null)
+            {
+                dest.Destroy();
+            }
+        }
+
+        Collider[] collidersToMove = Physics.OverlapSphere(transform.position, destructionRadius);
+
+        foreach (Collider nearbyObject in collidersToMove)
+        {
+            Rigidbody rb = nearbyObject.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.AddExplosionForce(explosionForce, transform.position, destructionRadius);
+            }
+        }
+    }
+
     void OnCollisionStay(Collision theCol)
 	{
         //Checks whether the player is colliding with either a floor
@@ -307,6 +342,28 @@ public class PlayerController : MonoBehaviour
 			this.moveSpeed = outsideSpeed;
 		}
 	}
+
+    /*
+    void OnTriggerEnter(Collider theCol)
+    {
+        //We checked if the player is colliding with the houses, and if true
+        //we will check each object within the overlap sphere, and make them 
+        //explode as if the player is walking over them
+        if (theCol.gameObject.CompareTag("HouseDestruction"))
+        {
+            Collider[] colliders = Physics.OverlapSphere(transform.position, destructionRadius);
+
+            foreach (Collider nearbyObject in colliders)
+            {
+                Rigidbody rb = nearbyObject.GetComponent<Rigidbody>();
+                if (rb != null)
+                {
+                    rb.AddExplosionForce(explosionForce, transform.position, destructionRadius);
+                }
+            }
+        }
+    }
+    */
 
     void OnTriggerStay(Collider theCol)
     {

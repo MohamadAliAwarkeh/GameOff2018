@@ -10,6 +10,7 @@ TagManager:
   - SMGPickup
   - RocketPickup
   - Wall
+  - HouseDestruction
   layers:
   - Default
   - TransparentFX
@@ -24,8 +25,8 @@ TagManager:
   - Guns
   - Obstacles
   - Targets
-  - 
-  - 
+  - Houses
+  - Player
   - 
   - 
   - 
